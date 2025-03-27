@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relaxing Bavarian Farm</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #c9e9f6;
+            font-family: 'Arial', sans-serif;
+        }
+        #animation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Add responsive design fixes */
+        @media (max-width: 768px) {
+            .farm {
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+            }
+
+            #animation-container svg {
+                max-width: 100%;
+            }
+        }
+        .mountains {
+            position: absolute;
+            bottom: 22%;
+            width: 100%;
+            height: 30%;
+            z-index: 1;
+        }
+        .river {
+            position: absolute;
+            bottom: 22%;
+            width: 100%;
+            height: 5%;
+            background: linear-gradient(to bottom, #88c1e6, #5fabdc);
+            z-index: 2;
+            animation: river-flow 15s infinite linear;
+        }
+        @keyframes river-flow {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 22%;
+            background-color: #7cba6b;
+            z-index: 3;
+        }
+        .farm {
+            position: absolute;
+            bottom: 22%;
+            left: 60%;
+            width: 200px;
+            height: 150px;
+            z-index: 4;
+        }
+        .chicken {
+            position: absolute;
+            width: 30px !important;
+            height: 30px !important;
+            z-index: 5;
+            transition: all 0.8s ease;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .chick {
+            position: absolute;
+            width: 15px !important;
+            height: 15px !important;
+            z-index: 5;
+            transition: all 0.8s ease;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .village {
+            position: absolute;
+            bottom: 22%;
+            left: 20%;
+            width: 300px;
+            height: 120px;
+            z-index: 4;
+        }
+        .clouds {
+            position: absolute;
+            top: 15%;
+            width: 100%;
+            height: 10%;
+            z-index: 0;
+        }
+        .cloud {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+        }
+        .tree {
+            position: absolute;
+            bottom: 22%;
+            z-index: 3;
+        }
+        .seed {
+            position: absolute;
+            width: 5px;
+            height: 3px;
+            background-color: #f5d742;
+            border-radius: 50%;
+            z-index: 4;
+            display: block !important;
+            visibility: visible !important;
+        }
+        .flower {
+            position: absolute;
+            z-index: 4;
+            bottom: 0;
+            pointer-events: none;
+        }
+        .windmill {
+            position: absolute;
+            z-index: 4;
+            bottom: 22%;
+            left: 40%;
+        }
+        .sun {
+            position: absolute;
+            top: 10%;
+            right: 15%;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ffeb3b 30%, rgba(255, 235, 59, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: sun-glow 8s infinite alternate;
+        }
+        @keyframes sun-glow {
+            0% { box-shadow: 0 0 20px 10px rgba(255, 235, 59, 0.3); }
+            100% { box-shadow: 0 0 40px 20px rgba(255, 235, 59, 0.5); }
+        }
+    </style>
+</head>
+<body>
+<div id="animation-container">
+    <!-- Will be filled by JavaScript -->
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to handle responsive sizing
+        function adjustForScreenSize() {
+            const container = document.getElementById('animation-container');
+            if (!container) return;
+
+            // Adjust elements based on screen width
+            const width = window.innerWidth;
+            const isMobile = width < 768;
+
+            // Any elements that need specific mobile adjustments
+            const elements = document.querySelectorAll('.farm, .tree, .windmill');
+            if (isMobile) {
+                elements.forEach(el => {
+                    el.style.transform = 'scale(0.8)';
+                });
+            } else {
+                elements.forEach(el => {
+                    el.style.transform = 'scale(1)';
+                });
+            }
+        }
+
+        // Call on load and on resize
+        window.addEventListener('resize', adjustForScreenSize);
+        setTimeout(adjustForScreenSize, 100);
+        const container = document.getElementById('animation-container');
+
+        if (!container) {
+            console.error('Animation container not found');
+            return;
+        }
+
+        // Add sky with gradient for time of day effect
+        container.style.background = 'linear-gradient(to bottom, #6495ED, #c9e9f6)';
+
+        // Add sun
+        const sun = document.createElement('div');
+        sun.className = 'sun';
+        container.appendChild(sun);
+
+        // Add mountains - fixed positioning
+        const mountains = document.createElement('div');
+        mountains.className = 'mountains';
+        mountains.style.position = 'absolute';
+        mountains.style.bottom = '22%';
+        mountains.style.height = '30%';
+        mountains.style.width = '100%';
+        mountains.style.zIndex = '1';
+
+        for (let i = 0; i < 7; i++) {
+            const mountain = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            mountain.setAttribute('width', '300');
+            mountain.setAttribute('height', '200');
+            mountain.style.position = 'absolute';
+            mountain.style.left = `${i * 200 - 100}px`;
+            mountain.style.bottom = '0';
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const height = 100 + Math.random() * 100;
+            path.setAttribute('d', `M0,200 L150,${200-height} L300,200 Z`);
+            path.setAttribute('fill', `rgb(${90 + i * 10}, ${95 + i * 5}, ${120 + i * 10})`);
+
+            const snowCap = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            snowCap.setAttribute('d', `M130,${220-height} L150,${200-height} L170,${220-height} Z`);
+            snowCap.setAttribute('fill', 'white');
+
+            mountain.appendChild(path);
+            mountain.appendChild(snowCap);
+            mountains.appendChild(mountain);
+        }
+        container.appendChild(mountains);
+
+        // Add clouds
+        const clouds = document.createElement('div');
+        clouds.className = 'clouds';
+        for (let i = 0; i < 8; i++) {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.style.width = `${80 + Math.random() * 120}px`;
+            cloud.style.height = `${40 + Math.random() * 30}px`;
+            cloud.style.left = `${Math.random() * 100}%`;
+            cloud.style.top = `${Math.random() * 100}%`;
+            cloud.style.opacity = `${0.7 + Math.random() * 0.3}`;
+
+            // Create cloud shape with multiple circles
+            for (let j = 0; j < 6; j++) {
+                const cloudPart = document.createElement('div');
+                cloudPart.style.position = 'absolute';
+                cloudPart.style.width = `${30 + Math.random() * 40}px`;
+                cloudPart.style.height = `${30 + Math.random() * 20}px`;
+                cloudPart.style.backgroundColor = 'white';
+                cloudPart.style.borderRadius = '50%';
+                cloudPart.style.left = `${j * 15}px`;
+                cloudPart.style.top = `${Math.random() * 10}px`;
+                cloud.appendChild(cloudPart);
+            }
+
+            // Animate cloud - slower movement
+            const speed = 0.005 + Math.random() * 0.01;
+            let position = Math.random() * 100;
+            setInterval(() => {
+                position += speed;
+                if (position > 100) position = -20;
+                cloud.style.left = `${position}%`;
+            }, 50);
+
+            clouds.appendChild(cloud);
+        }
+        container.appendChild(clouds);
+
+        // Add river with enhanced effects
+        const river = document.createElement('div');
+        river.className = 'river';
+        container.appendChild(river);
+
+        // Add ripples to the river
+        for (let i = 0; i < 15; i++) {
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.width = '20px';
+            ripple.style.height = '5px';
+            ripple.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+            ripple.style.borderRadius = '50%';
+            ripple.style.left = `${Math.random() * 100}%`;
+            ripple.style.top = `${Math.random() * 100}%`;
+
+            // Animate ripple
+            setInterval(() => {
+                ripple.style.left = `${Math.random() * 100}%`;
+                ripple.style.top = `${Math.random() * 100}%`;
+            }, 3000 + Math.random() * 2000);
+
+            river.appendChild(ripple);
+        }
+
+        // Add ground
+        const ground = document.createElement('div');
+        ground.className = 'ground';
+        container.appendChild(ground);
+
+        // Add grass details to the ground
+        for (let i = 0; i < 300; i++) {
+            const grass = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            grass.setAttribute('width', '10');
+            grass.setAttribute('height', '15');
+            grass.style.position = 'absolute';
+            grass.style.left = `${Math.random() * 100}%`;
+            grass.style.bottom = `${Math.random() * 80}%`; // Keep some grass away from the very bottom
+            grass.style.zIndex = '4';
+
+            const blade = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            blade.setAttribute('d', 'M5,15 Q3,7 5,0 Q7,7 5,15');
+            blade.setAttribute('fill', `rgb(${90 + Math.random() * 40}, ${150 + Math.random() * 50}, ${90 + Math.random() * 30})`);
+
+            grass.appendChild(blade);
+            ground.appendChild(grass);
+        }
+
+        // No flowers on the ground - they're now only by the house
+
+        // Add windmill on the ground
+        const windmill = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        windmill.setAttribute('width', '100');
+        windmill.setAttribute('height', '150');
+        windmill.style.position = 'absolute';
+        windmill.style.bottom = '0'; // Position on the ground
+        windmill.style.right = '15%';
+        windmill.style.zIndex = '4';
+
+        // Windmill base
+        const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        base.setAttribute('d', 'M45,150 L35,80 L65,80 L55,150 Z');
+        base.setAttribute('fill', '#8B4513');
+
+        // Windmill top
+        const top = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        top.setAttribute('cx', '50');
+        top.setAttribute('cy', '80');
+        top.setAttribute('r', '5');
+        top.setAttribute('fill', '#A0522D');
+
+        // Windmill blades group
+        const blades = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        blades.setAttribute('transform', 'translate(50, 80)');
+
+        // Create 4 blades
+        for (let i = 0; i < 4; i++) {
+            const blade = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            blade.setAttribute('d', 'M0,0 L30,10 L35,0 L30,-10 Z');
+            blade.setAttribute('fill', '#F5F5DC');
+            blade.setAttribute('transform', `rotate(${i * 90})`);
+            blades.appendChild(blade);
+        }
+
+        // Animate windmill blades
+        let angle = 0;
+        setInterval(() => {
+            angle += 0.5;
+            blades.setAttribute('transform', `translate(50, 80) rotate(${angle})`);
+        }, 50);
+
+        windmill.appendChild(base);
+        windmill.appendChild(top);
+        windmill.appendChild(blades);
+        container.appendChild(windmill);
+
+        // Add single farm house with barn
+        const farmHouse = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        farmHouse.setAttribute('width', '300');
+        farmHouse.setAttribute('height', '150');
+        farmHouse.style.position = 'absolute';
+        farmHouse.style.bottom = '0'; // Fix house to be on the ground, not flying
+        farmHouse.style.left = '20%';
+        farmHouse.style.zIndex = '4';
+
+        // Main house
+        const houseBase = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        houseBase.setAttribute('x', '20');
+        houseBase.setAttribute('y', '50');
+        houseBase.setAttribute('width', '100');
+        houseBase.setAttribute('height', '80');
+        houseBase.setAttribute('fill', '#F5F5DC');
+
+        // House roof
+        const houseRoof = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        houseRoof.setAttribute('d', 'M10,50 L70,10 L130,50 Z');
+        houseRoof.setAttribute('fill', '#8B4513');
+
+        // House windows
+        const window1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        window1.setAttribute('x', '35');
+        window1.setAttribute('y', '60');
+        window1.setAttribute('width', '20');
+        window1.setAttribute('height', '20');
+        window1.setAttribute('fill', '#81a8d7');
+
+        const window2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        window2.setAttribute('x', '75');
+        window2.setAttribute('y', '60');
+        window2.setAttribute('width', '20');
+        window2.setAttribute('height', '20');
+        window2.setAttribute('fill', '#81a8d7');
+
+        // House door
+        const houseDoor = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        houseDoor.setAttribute('x', '55');
+        houseDoor.setAttribute('y', '90');
+        houseDoor.setAttribute('width', '30');
+        houseDoor.setAttribute('height', '40');
+        houseDoor.setAttribute('fill', '#8B4513');
+
+        // Window frames
+        const windowFrame1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        windowFrame1.setAttribute('d', 'M35,70 L55,70 M45,60 L45,80');
+        windowFrame1.setAttribute('stroke', 'white');
+        windowFrame1.setAttribute('stroke-width', '1');
+
+        const windowFrame2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        windowFrame2.setAttribute('d', 'M75,70 L95,70 M85,60 L85,80');
+        windowFrame2.setAttribute('stroke', 'white');
+        windowFrame2.setAttribute('stroke-width', '1');
+
+        // Bavarian-style wooden beams
+        for (let j = 0; j < 3; j++) {
+            const beam = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            beam.setAttribute('x', '20');
+            beam.setAttribute('y', `${55 + j * 25}`);
+            beam.setAttribute('width', '100');
+            beam.setAttribute('height', '5');
+            beam.setAttribute('fill', '#8B4513');
+            farmHouse.appendChild(beam);
+        }
+
+        for (let j = 0; j < 4; j++) {
+            const beam = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            beam.setAttribute('x', `${30 + j * 30}`);
+            beam.setAttribute('y', '50');
+            beam.setAttribute('width', '5');
+            beam.setAttribute('height', '80');
+            beam.setAttribute('fill', '#8B4513');
+            farmHouse.appendChild(beam);
+        }
+
+        // Barn attached to house
+        const barnBase = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        barnBase.setAttribute('x', '150');
+        barnBase.setAttribute('y', '70');
+        barnBase.setAttribute('width', '80');
+        barnBase.setAttribute('height', '60');
+        barnBase.setAttribute('fill', '#b22222');
+
+        // Barn roof
+        const barnRoof = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        barnRoof.setAttribute('d', 'M140,70 L190,30 L240,70 Z');
+        barnRoof.setAttribute('fill', '#8B4513');
+
+        // Barn door
+        const barnDoor = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        barnDoor.setAttribute('x', '175');
+        barnDoor.setAttribute('y', '90');
+        barnDoor.setAttribute('width', '30');
+        barnDoor.setAttribute('height', '40');
+        barnDoor.setAttribute('fill', '#8B4513');
+
+        // Door details
+        const doorDetail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        doorDetail.setAttribute('d', 'M175,90 L205,90 M175,110 L205,110 M190,90 L190,130');
+        doorDetail.setAttribute('stroke', '#6B4423');
+        doorDetail.setAttribute('stroke-width', '2');
+
+        // Add just 3 flowers near the house
+        const flowerColors = ['#FF69B4', '#FF1493', '#FF6347'];
+
+        for (let i = 0; i < 3; i++) {
+            const flower = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            flower.setAttribute('transform', `translate(${50 + i * 40}, 135)`);
+
+            // Stem
+            const stem = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            stem.setAttribute('x1', '0');
+            stem.setAttribute('y1', '0');
+            stem.setAttribute('x2', '0');
+            stem.setAttribute('y2', '-15');
+            stem.setAttribute('stroke', '#458B00');
+            stem.setAttribute('stroke-width', '2');
+
+            // Petals
+            for (let j = 0; j < 5; j++) {
+                const petal = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                const angle = (j / 5) * Math.PI * 2;
+                petal.setAttribute('cx', (Math.cos(angle) * 6).toString());
+                petal.setAttribute('cy', (-15 + Math.sin(angle) * 6).toString());
+                petal.setAttribute('r', '5');
+                petal.setAttribute('fill', flowerColors[i]);
+                flower.appendChild(petal);
+            }
+
+            // Center
+            const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            center.setAttribute('cx', '0');
+            center.setAttribute('cy', '-15');
+            center.setAttribute('r', '3');
+            center.setAttribute('fill', '#FFFF00');
+
+            flower.appendChild(stem);
+            flower.appendChild(center);
+            farmHouse.appendChild(flower);
+        }
+
+        farmHouse.appendChild(houseBase);
+        farmHouse.appendChild(houseRoof);
+        farmHouse.appendChild(window1);
+        farmHouse.appendChild(window2);
+        farmHouse.appendChild(windowFrame1);
+        farmHouse.appendChild(windowFrame2);
+        farmHouse.appendChild(houseDoor);
+        farmHouse.appendChild(barnBase);
+        farmHouse.appendChild(barnRoof);
+        farmHouse.appendChild(barnDoor);
+        farmHouse.appendChild(doorDetail);
+
+        container.appendChild(farmHouse);
+
+        // Add farm
+        const farm = document.createElement('div');
+        farm.className = 'farm';
+
+        // Barn
+        const barn = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        barn.setAttribute('width', '150');
+        barn.setAttribute('height', '120');
+        barn.style.position = 'absolute';
+        barn.style.bottom = '0';
+        barn.style.left = '20px';
+
+        // Barn base
+        // const barnBase = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        // barnBase.setAttribute('x', '20');
+        // barnBase.setAttribute('y', '50');
+        // barnBase.setAttribute('width', '100');
+        // barnBase.setAttribute('height', '70');
+        // barnBase.setAttribute('fill', '#b22222');
+
+        // Barn roof
+        // const barnRoof = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        // barnRoof.setAttribute('d', 'M10,50 L70,10 L130,50 Z');
+        // barnRoof.setAttribute('fill', '#8B4513');
+        //
+        // // Barn door
+        // const barnDoor = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        // barnDoor.setAttribute('x', '60');
+        // barnDoor.setAttribute('y', '80');
+        // barnDoor.setAttribute('width', '30');
+        // barnDoor.setAttribute('height', '40');
+        // barnDoor.setAttribute('fill', '#8B4513');
+
+        // Barn window
+        const barnWindow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        barnWindow.setAttribute('cx', '70');
+        barnWindow.setAttribute('cy', '40');
+        barnWindow.setAttribute('r', '10');
+        barnWindow.setAttribute('fill', '#81a8d7');
+
+        // // Add barn door details
+        // const doorDetail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        // doorDetail.setAttribute('d', 'M60,80 L90,80 M60,100 L90,100 M75,80 L75,120');
+        // doorDetail.setAttribute('stroke', '#6B4423');
+        // doorDetail.setAttribute('stroke-width', '2');
+
+        // Add hay bales near barn
+        for (let i = 0; i < 3; i++) {
+            const hayBale = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            hayBale.setAttribute('cx', 25 + i * 30);
+            hayBale.setAttribute('cy', '115');
+            hayBale.setAttribute('rx', '10');
+            hayBale.setAttribute('ry', '5');
+            hayBale.setAttribute('fill', '#DAA520');
+            barn.appendChild(hayBale);
+        }
+
+        barn.appendChild(barnBase);
+        barn.appendChild(barnRoof);
+        barn.appendChild(barnDoor);
+        barn.appendChild(doorDetail);
+        barn.appendChild(barnWindow);
+        farm.appendChild(barn);
+
+        // Fence
+        const fence = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        fence.setAttribute('width', '400');
+        fence.setAttribute('height', '30');
+        fence.style.position = 'absolute';
+        fence.style.bottom = '0';
+        fence.style.left = '-50px';
+
+        for (let i = 0; i < 20; i++) {
+            const post = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            post.setAttribute('x', `${i * 20}`);
+            post.setAttribute('y', '10');
+            post.setAttribute('width', '5');
+            post.setAttribute('height', '20');
+            post.setAttribute('fill', '#8B4513');
+            fence.appendChild(post);
+
+            if (i < 19) {
+                const rail1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rail1.setAttribute('x', `${i * 20 + 5}`);
+                rail1.setAttribute('y', '15');
+                rail1.setAttribute('width', '15');
+                rail1.setAttribute('height', '3');
+                rail1.setAttribute('fill', '#8B4513');
+                fence.appendChild(rail1);
+
+                const rail2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rail2.setAttribute('x', `${i * 20 + 5}`);
+                rail2.setAttribute('y', '22');
+                rail2.setAttribute('width', '15');
+                rail2.setAttribute('height', '3');
+                rail2.setAttribute('fill', '#8B4513');
+                fence.appendChild(rail2);
+            }
+        }
+        farm.appendChild(fence);
+        container.appendChild(farm);
+
+        // Add trees
+        for (let i = 0; i < 10; i++) {
+            const tree = document.createElement('div');
+            tree.className = 'tree';
+            tree.style.left = `${10 + Math.random() * 80}%`;
+
+            const treeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            treeSvg.setAttribute('width', '50');
+            treeSvg.setAttribute('height', '80');
+
+            // Tree trunk
+            const trunk = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            trunk.setAttribute('x', '20');
+            trunk.setAttribute('y', '40');
+            trunk.setAttribute('width', '10');
+            trunk.setAttribute('height', '40');
+            trunk.setAttribute('fill', '#8B4513');
+
+            // Tree foliage - more detailed with multiple layers
+            const foliage1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            foliage1.setAttribute('cx', '25');
+            foliage1.setAttribute('cy', '35');
+            foliage1.setAttribute('r', '20');
+            foliage1.setAttribute('fill', `rgb(${50 + Math.random() * 30}, ${120 + Math.random() * 30}, ${50 + Math.random() * 30})`);
+
+            const foliage2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            foliage2.setAttribute('cx', '35');
+            foliage2.setAttribute('cy', '30');
+            foliage2.setAttribute('r', '15');
+            foliage2.setAttribute('fill', `rgb(${60 + Math.random() * 30}, ${130 + Math.random() * 30}, ${60 + Math.random() * 30})`);
+
+            const foliage3 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            foliage3.setAttribute('cx', '15');
+            foliage3.setAttribute('cy', '30');
+            foliage3.setAttribute('r', '12');
+            foliage3.setAttribute('fill', `rgb(${70 + Math.random() * 30}, ${140 + Math.random() * 30}, ${70 + Math.random() * 30})`);
+
+            treeSvg.appendChild(trunk);
+            treeSvg.appendChild(foliage1);
+            treeSvg.appendChild(foliage2);
+            treeSvg.appendChild(foliage3);
+            tree.appendChild(treeSvg);
+            container.appendChild(tree);
+        }
+
+        // Create a farm area div for chickens to stay in - expanded area
+        const farmArea = document.createElement('div');
+        farmArea.style.position = 'absolute';
+        farmArea.style.bottom = '0';
+        farmArea.style.left = '10%'; // Expanded left position
+        farmArea.style.width = '80%'; // Wider area
+        farmArea.style.height = '22%';
+        farmArea.style.zIndex = '5';
+        // Make the farm area border invisible in the final version
+        farmArea.style.border = '1px solid rgba(0,0,0,0.0)';
+
+        container.appendChild(farmArea);
+
+        // Add chickens and chicks
+        const chickenColors = ['#f5f5dc', '#d2b48c', '#8b4513', '#ffffff', '#cc7722', '#e0c9a6', '#ffe4b5', '#fff8dc'];
+        const chickens = [];
+        const chicks = [];
+
+        // Add more chickens (increased from 5 to 12)
+        for (let i = 0; i < 12; i++) {
+            const chickenColor = chickenColors[Math.floor(Math.random() * chickenColors.length)];
+            const chicken = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            chicken.setAttribute('width', '30');
+            chicken.setAttribute('height', '30');
+            chicken.className = 'chicken';
+
+            // Position chickens on the ground
+            const bottomPosition = 2 + Math.random() * 10;
+            const leftPosition = 10 + Math.random() * 80;
+            chicken.style.position = 'absolute';
+            chicken.style.bottom = `${bottomPosition}%`;
+            chicken.style.left = `${leftPosition}%`;
+
+            // Chicken body
+            const body = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            body.setAttribute('cx', '15');
+            body.setAttribute('cy', '20');
+            body.setAttribute('rx', '12');
+            body.setAttribute('ry', '8');
+            body.setAttribute('fill', chickenColor);
+
+            // Chicken head
+            const head = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            head.setAttribute('cx', '5');
+            head.setAttribute('cy', '15');
+            head.setAttribute('r', '6');
+            head.setAttribute('fill', chickenColor);
+
+            // Chicken comb
+            const comb = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            comb.setAttribute('d', 'M5,9 L3,5 L5,7 L7,5 L8,7 L10,5 L9,9');
+            comb.setAttribute('fill', '#ff0000');
+
+            // Chicken beak
+            const beak = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            beak.setAttribute('d', 'M0,15 L-5,14 L0,16 Z');
+            beak.setAttribute('fill', '#ffa500');
+
+            // Chicken legs
+            const leg1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            leg1.setAttribute('x1', '10');
+            leg1.setAttribute('y1', '28');
+            leg1.setAttribute('x2', '10');
+            leg1.setAttribute('y2', '33');
+            leg1.setAttribute('stroke', '#ffa500');
+            leg1.setAttribute('stroke-width', '2');
+
+            const leg2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            leg2.setAttribute('x1', '20');
+            leg2.setAttribute('y1', '28');
+            leg2.setAttribute('x2', '20');
+            leg2.setAttribute('y2', '33');
+            leg2.setAttribute('stroke', '#ffa500');
+            leg2.setAttribute('stroke-width', '2');
+
+            // Chicken feet
+            const foot1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            foot1.setAttribute('d', 'M8,33 L10,33 L12,33');
+            foot1.setAttribute('stroke', '#ffa500');
+            foot1.setAttribute('stroke-width', '1');
+
+            const foot2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            foot2.setAttribute('d', 'M18,33 L20,33 L22,33');
+            foot2.setAttribute('stroke', '#ffa500');
+            foot2.setAttribute('stroke-width', '1');
+
+            // Chicken tail feathers
+            const tail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            tail.setAttribute('d', 'M27,20 Q32,15 32,20 Q32,25 27,20');
+            tail.setAttribute('fill', chickenColor);
+
+            chicken.appendChild(body);
+            chicken.appendChild(head);
+            chicken.appendChild(comb);
+            chicken.appendChild(beak);
+            chicken.appendChild(leg1);
+            chicken.appendChild(leg2);
+            chicken.appendChild(foot1);
+            chicken.appendChild(foot2);
+            chicken.appendChild(tail);
+
+            // Make sure positions are visible as actual pixels
+            chicken.setAttribute('width', '30');
+            chicken.setAttribute('height', '30');
+            chicken.style.width = '30px';
+            chicken.style.height = '30px';
+            chicken.style.position = 'absolute';
+
+            // Make sure chicken is visible
+            farmArea.appendChild(chicken);
+
+            chickens.push({
+                element: chicken,
+                x: leftPosition,
+                y: bottomPosition,
+                direction: Math.random() * Math.PI * 2,
+                speed: 0.01 + Math.random() * 0.02, // Even slower speed for smoother movement
+                state: 'walking', // walking, pecking
+                stateTime: 0,
+                pecking: false,
+                targetSeed: null
+            });
+        }
+
+        // Add more chicks (increased from 7 to 15)
+        for (let i = 0; i < 15; i++) {
+            const chick = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            chick.setAttribute('width', '15');
+            chick.setAttribute('height', '15');
+            chick.className = 'chick';
+
+            // Position chicks on the ground
+            const bottomPosition = 2 + Math.random() * 10;
+            const leftPosition = 10 + Math.random() * 80;
+            chick.style.position = 'absolute';
+            chick.style.bottom = `${bottomPosition}%`;
+            chick.style.left = `${leftPosition}%`;
+
+            // Chick body
+            const body = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            body.setAttribute('cx', '7.5');
+            body.setAttribute('cy', '10');
+            body.setAttribute('r', '5');
+            body.setAttribute('fill', '#ffff00');
+
+            // Chick head
+            const head = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            head.setAttribute('cx', '4');
+            head.setAttribute('cy', '7');
+            head.setAttribute('r', '3');
+            head.setAttribute('fill', '#ffff00');
+
+            // Chick beak
+            const beak = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            beak.setAttribute('d', 'M2,7 L0,6.5 L2,7.5 Z');
+            beak.setAttribute('fill', '#ffa500');
+
+            // Chick legs
+            const leg = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            leg.setAttribute('x1', '7.5');
+            leg.setAttribute('y1', '15');
+            leg.setAttribute('x2', '7.5');
+            leg.setAttribute('y2', '17');
+            leg.setAttribute('stroke', '#ffa500');
+            leg.setAttribute('stroke-width', '1');
+
+            // Chick wings
+            const wing = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            wing.setAttribute('cx', '9');
+            wing.setAttribute('cy', '10');
+            wing.setAttribute('rx', '2');
+            wing.setAttribute('ry', '3');
+            wing.setAttribute('fill', '#ffffa0');
+            wing.setAttribute('transform', 'rotate(-20, 9, 10)');
+
+            chick.appendChild(body);
+            chick.appendChild(head);
+            chick.appendChild(beak);
+            chick.appendChild(leg);
+            chick.appendChild(wing);
+
+            // Make sure positions are visible as actual pixels
+            chick.style.width = '15px';
+            chick.style.height = '15px';
+            chick.style.position = 'absolute';
+
+            // Make sure chick is visible
+            farmArea.appendChild(chick);
+
+            chicks.push({
+                element: chick,
+                x: leftPosition,
+                y: bottomPosition,
+                direction: Math.random() * Math.PI * 2,
+                speed: 0.01 + Math.random() * 0.015, // Even slower speed for smoother movement
+                state: 'walking',
+                stateTime: 0
+            });
+        }
+
+        // Add more seeds for chickens to peck at
+        const seeds = [];
+        for (let i = 0; i < 40; i++) {
+            const seed = document.createElement('div');
+            seed.className = 'seed';
+            seed.style.position = 'absolute';
+            seed.style.left = `${10 + Math.random() * 80}%`;
+            seed.style.bottom = `${2 + Math.random() * 10}%`;
+            farmArea.appendChild(seed);
+            seeds.push(seed);
+        }
+
+        // Animate chickens and chicks
+        function animateChickens() {
+            try {
+                // Move adult chickens
+                chickens.forEach(chicken => {
+                    if (!chicken || !chicken.element) return;
+
+                    if (chicken.state === 'walking') {
+                        chicken.stateTime++;
+
+                        // Change direction occasionally but more smoothly
+                        if (Math.random() < 0.005) { // Even less frequent direction changes
+                            chicken.direction += (Math.random() - 0.5) * Math.PI * 0.5; // Smaller angle changes
+                        }
+
+                        // Move chicken
+                        chicken.x += Math.cos(chicken.direction) * chicken.speed;
+                        chicken.y += Math.sin(chicken.direction) * chicken.speed * 0.5;
+
+                        // Keep in bounds - wider area
+                        if (chicken.x < 2) chicken.x = 2;
+                        if (chicken.x > 98) chicken.x = 98;
+                        if (chicken.y < 2) chicken.y = 2;
+                        if (chicken.y > 18) chicken.y = 18;
+
+                        // Look for nearby seeds
+                        if (!chicken.pecking && Math.random() < 0.015) { // Slightly less frequent pecking
+                            const visibleSeeds = seeds.filter(seed =>
+                                seed && seed.style && seed.style.display !== 'none'
+                            );
+
+                            const nearbySeeds = visibleSeeds.filter(seed => {
+                                if (!seed || !seed.style) return false;
+
+                                const seedX = parseFloat(seed.style.left) || 0;
+                                const seedY = parseFloat(seed.style.bottom) || 0;
+                                const distance = Math.sqrt(Math.pow(chicken.x - seedX, 2) + Math.pow(chicken.y - seedY, 2));
+                                return distance < 20;
+                            });
+
+                            if (nearbySeeds.length > 0) {
+                                chicken.targetSeed = nearbySeeds[Math.floor(Math.random() * nearbySeeds.length)];
+                                chicken.state = 'pecking';
+                                chicken.stateTime = 0;
+                            }
+                        }
+
+                        // Update position
+                        chicken.element.style.left = `${chicken.x}%`;
+                        chicken.element.style.bottom = `${chicken.y}%`;
+
+                        // Face the right direction
+                        if (Math.cos(chicken.direction) > 0) {
+                            chicken.element.style.transform = 'scaleX(-1)';
+                        } else {
+                            chicken.element.style.transform = 'scaleX(1)';
+                        }
+
+                        // Bobbing motion - slower bobbing
+                        if (chicken.stateTime % 16 < 8) {
+                            chicken.element.style.marginBottom = '1px';
+                        } else {
+                            chicken.element.style.marginBottom = '0px';
+                        }
+                    } else if (chicken.state === 'pecking') {
+                        chicken.stateTime++;
+
+                        // Pecking animation - slower
+                        if (chicken.stateTime < 15) {
+                            // Approach seed
+                            if (chicken.targetSeed && chicken.targetSeed.style) {
+                                const seedX = parseFloat(chicken.targetSeed.style.left) || 0;
+                                const seedY = parseFloat(chicken.targetSeed.style.bottom) || 0;
+                                chicken.x = chicken.x * 0.9 + seedX * 0.1;
+                                chicken.y = chicken.y * 0.9 + seedY * 0.1;
+                                chicken.element.style.left = `${chicken.x}%`;
+                                chicken.element.style.bottom = `${chicken.y}%`;
+                            }
+                        } else if (chicken.stateTime < 30) {
+                            // Pecking down
+                            chicken.element.style.marginBottom = '-2px';
+                        } else if (chicken.stateTime < 45) {
+                            // Pecking up
+                            chicken.element.style.marginBottom = '0px';
+
+                            // Eat the seed
+                            if (chicken.targetSeed && chicken.targetSeed.style && chicken.stateTime === 37) {
+                                chicken.targetSeed.style.display = 'none';
+
+                                // Create a new seed somewhere else after a delay
+                                setTimeout(() => {
+                                    try {
+                                        if (chicken.targetSeed) {
+                                            chicken.targetSeed.style.display = 'block';
+                                            chicken.targetSeed.style.left = `${10 + Math.random() * 80}%`;
+                                            chicken.targetSeed.style.bottom = `${2 + Math.random() * 10}%`;
+                                        }
+                                    } catch (e) {
+                                        console.error('Error respawning seed:', e);
+                                    }
+                                }, 5000 + Math.random() * 5000);
+                            }
+                        } else {
+                            // Go back to walking
+                            chicken.state = 'walking';
+                            chicken.stateTime = 0;
+                            chicken.targetSeed = null;
+                        }
+                    }
+                });
+
+                // Move chicks
+                chicks.forEach(chick => {
+                    if (!chick || !chick.element) return;
+
+                    chick.stateTime++;
+
+                    // Change direction less frequently with gentler turns
+                    if (Math.random() < 0.01) {
+                        chick.direction += (Math.random() - 0.5) * Math.PI * 0.7; // Smaller angle changes
+                    }
+
+                    // Occasionally follow a random adult chicken
+                    if (Math.random() < 0.01 && chickens.length > 0) {
+                        const validChickens = chickens.filter(c => c && c.element);
+                        if (validChickens.length > 0) {
+                            const randomChicken = validChickens[Math.floor(Math.random() * validChickens.length)];
+                            const dx = randomChicken.x - chick.x;
+                            const dy = randomChicken.y - chick.y;
+                            chick.direction = Math.atan2(dy, dx);
+                        }
+                    }
+
+                    // Move chick
+                    chick.x += Math.cos(chick.direction) * chick.speed;
+                    chick.y += Math.sin(chick.direction) * chick.speed * 0.5;
+
+                    // Keep in bounds - wider area
+                    if (chick.x < 2) chick.x = 2;
+                    if (chick.x > 98) chick.x = 98;
+                    if (chick.y < 2) chick.y = 2;
+                    if (chick.y > 18) chick.y = 18;
+
+                    // Update position
+                    chick.element.style.left = `${chick.x}%`;
+                    chick.element.style.bottom = `${chick.y}%`;
+
+                    // Face the right direction
+                    if (Math.cos(chick.direction) > 0) {
+                        chick.element.style.transform = 'scaleX(-1)';
+                    } else {
+                        chick.element.style.transform = 'scaleX(1)';
+                    }
+
+                    // Quick bobbing motion - slowed down
+                    if (chick.stateTime % 10 < 5) {
+                        chick.element.style.marginBottom = '1px';
+                    } else {
+                        chick.element.style.marginBottom = '0px';
+                    }
+                });
+            } catch (e) {
+                console.error('Error in animation:', e);
+            }
+
+            requestAnimationFrame(animateChickens);
+        }
+
+        // Start animation
+        animateChickens();
+
+        // Set up animation loop with error handling
+        function setupAnimationLoop() {
+            try {
+                requestAnimationFrame(animateChickens);
+            } catch (e) {
+                console.error('Animation error:', e);
+                // Try to recover
+                setTimeout(setupAnimationLoop, 1000);
+            }
+        }
+
+        setupAnimationLoop();
+    });
+</script>
+</body>
+</html>
